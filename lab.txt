@@ -139,3 +139,44 @@ print(f"Математическое ожидание: {mean_val}")
 print(f"Дисперсия: {variance_val}")
 print(f"Медиана: {median_val}")
 print(f"Мода: {mode_val}")
+
+####################################################
+
+
+
+
+freq1 = freq.tolist()
+
+
+midpoints = [(a + b) / 2 for a, b in new_intervals]
+n = sum(freq1)
+
+# vyborochnaya
+math_e = sum(f * x for f, x in zip(freq1, midpoints)) / n
+
+disp = sum(f * (x - math_e)**2 for f, x in zip(freq1, midpoints)) / n
+
+summa = [sum(freq1[:i + 1]) for i in range(len(freq1))]
+medind = 0
+for i, c in enumerate(summa):
+    if (c >= n / 2): 
+        medind = i
+        break
+a_h = new_intervals[medind][0]
+F = summa[medind - 1] if medind > 0 else 0
+f_med = freq1[medind]
+h = new_intervals[medind][1] - new_intervals[medind][0]
+median = a_h + ((n / 2 - F) / f_med) * h
+
+
+modind = freq1.index(max(freq1))
+a_h = new_intervals[modind][0]
+n_d = freq1[modind]
+n_dprev = freq1[modind - 1] if modind > 0 else 0
+n_dnext = freq1[modind + 1] if modind < len(freq1) - 1 else 0
+moda = a_h + ((n_d - n_dprev) / (2 * n_d - n_dprev - n_dnext)) * h
+
+print(f"Математическое ожидание: {math_e}")
+print(f"Дисперсия: {disp}")
+print(f"Медиана: {median_val}")
+print(f"Мода: {moda}")
