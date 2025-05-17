@@ -180,3 +180,33 @@ print(f"Математическое ожидание: {math_e}")
 print(f"Дисперсия: {disp}")
 print(f"Медиана: {median_val}")
 print(f"Мода: {moda}")
+
+###########  
+
+# оценка медианы по негруппированным данным
+d
+h = 1 / 2 * (d[24] + d[25])
+print('оценка медианы по негруппированным данным', h)
+
+
+######################
+
+# Получение оценок среднего и дисперсии по негруппированным данным
+
+x_mean = sum(d) / n
+d_x = (sum([d[i]**2]) - n * x_mean**2) / n
+s2 = 1 / (n - 1) * d_x
+
+print('Получение оценок среднего и дисперсии по негруппированным данным', x_mean, d_x, s2 ,sep='\n')
+
+
+
+
+conf_mean = statsmodels.stats.weightstats.zconfint(dataset, alpha=0.95, alternative='two-sided')
+
+
+
+
+x2 = [i**2 for i in d]
+m2x = statsmodels.stats.weightstats.zconfint(x2, alpha=0.95, alternative='two-sided')
+d = (m2x[0] - conf_mean[0]**2, m2x[1] - conf_mean[1]**2)
