@@ -1,0 +1,182 @@
+"Postroenie variazionnogo ryada"
+
+dataset = [-7.88, 13.03, 42.6, 18.23, 8.27, 14.53, 50.86, 15.14, 14.72, 21.58, 7.41, 
+        -8.66, 8.51, 5.02, 12.21, 5.28, 32.09, 4.86, 9.82, 17.74, 1.15, 24.2, 
+        14.87, 9.69, 3.08, 13.3, 10.08, 7.38, 13.83, 22.82, 11.88, 14.24, 9.95, 
+        -5.89, 22.7, 9.98, 12.26, 2.22, 10.78, 1.17, 24.55, 6.54, 15.97, -4.68, 15.98, -5.72, -12.42, -6.43, 10.12, -3.91]
+
+sort = sorted(dataset)
+print("Вариационный ряд (сортировка):\n", sort)
+
+
+ran = max(dataset) - min(dataset)
+print("Размах выборки: max - min =", ran)
+print('Статистический ряд')
+print([dataset.count(i) / len(dataset) for i in list(set(dataset))])
+
+
+##########################################################################
+
+
+import numpy as np
+
+i = 7 
+minimum = min(dataset)
+maximum = max(dataset)
+r = maximum - minimum
+h = r / i
+
+
+b = [minimum + k * h for k in range(i + 1)]
+freq, _ = np.histogram(d, bins=b)
+
+
+for k in range(i):
+    print(f"Интервал {k + 1}: [{b[k]:0.2f}; {b[k + 1]:0.2f})     Частота: {freq[k]}")
+
+
+##################################################################
+
+
+print(h)
+print(b)
+
+
+
+###############################################################
+
+
+for i in range(1, len(b)):
+    count = 0
+    for k in dataset:
+        if (b[i - 1] <= k < b[i]): count += 1
+    print(f'Интервал [{b[i - 1] : 0.2f}; {b[i] : 0.2f}), число попаданий: {count}')
+
+
+
+
+
+
+
+
+
+
+###############################################################
+
+
+
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+data = np.array(dataset)
+
+intervals = 7
+intervals = np.linspace(data.min(), data.max(), intervals + 1)
+
+
+plt.hist(data, bins=intervals, alpha=0.7)
+
+
+midpoint_list = [(intervals[i] + intervals[i + 1]) / 2 for i in range(len(intervals) - 1)]
+
+
+freq, _ = np.histogram(data, bins=intervals)
+
+
+plt.plot(midpoint_list, freq, 'o-')
+
+plt.show()
+
+datasort = np.sort(data)
+n = len(datasort)
+F = np.arange(1, n + 1) / n
+
+plt.figure(figsize=(8, 5))
+plt.step(datasort, F, where="post", color='orange')
+plt.xlabel("x")
+plt.ylabel("F(x)")
+plt.grid()
+plt.show()
+
+
+#########################################
+
+
+# Заданные интервалы и частоты
+freq1 = freq.tolist()
+
+# Середины интервалов
+midpoints = [(a + b) / 2 for a, b in intervals]
+n = sum(frequencies)
+
+# Математическое ожидание
+mean_val = sum(f * x for f, x in zip(frequencies, midpoints)) / n
+
+# Дисперсия
+variance_val = sum(f * (x - mean_val) ** 2 for f, x in zip(frequencies, midpoints)) / (n - 1)
+
+# Медиана
+cumulative = [sum(frequencies[:i+1]) for i in range(len(frequencies))]
+half_n = n / 2
+median_index = next(i for i, cum in enumerate(cumulative) if cum >= half_n)
+L = intervals[median_index][0]
+F = cumulative[median_index - 1] if median_index > 0 else 0
+f_med = frequencies[median_index]
+h = intervals[median_index][1] - intervals[median_index][0]
+median_val = L + ((half_n - F) / f_med) * h
+
+# Мода
+modal_index = frequencies.index(max(frequencies))
+L_mod = intervals[modal_index][0]
+f_mod = frequencies[modal_index]
+f_prev = frequencies[modal_index - 1] if modal_index > 0 else 0
+f_next = frequencies[modal_index + 1] if modal_index < len(frequencies) - 1 else 0
+mode_val = L_mod + (f_mod - f_prev) / ((f_mod - f_prev) + (f_mod - f_next)) * h
+
+print(f"Математическое ожидание: {mean_val}")
+print(f"Дисперсия: {variance_val}")
+print(f"Медиана: {median_val}")
+print(f"Мода: {mode_val}")
+
+####################################################
+
+
+
+
+freq1 = freq.tolist()
+
+
+midpoints = [(a + b) / 2 for a, b in new_intervals]
+n = sum(freq1)
+
+# vyborochnaya
+math_e = sum(f * x for f, x in zip(freq1, midpoints)) / n
+
+disp = sum(f * (x - math_e)**2 for f, x in zip(freq1, midpoints)) / n
+
+summa = [sum(freq1[:i + 1]) for i in range(len(freq1))]
+medind = 0
+for i, c in enumerate(summa):
+    if (c >= n / 2): 
+        medind = i
+        break
+a_h = new_intervals[medind][0]
+F = summa[medind - 1] if medind > 0 else 0
+f_med = freq1[medind]
+h = new_intervals[medind][1] - new_intervals[medind][0]
+median = a_h + ((n / 2 - F) / f_med) * h
+
+
+modind = freq1.index(max(freq1))
+a_h = new_intervals[modind][0]
+n_d = freq1[modind]
+n_dprev = freq1[modind - 1] if modind > 0 else 0
+n_dnext = freq1[modind + 1] if modind < len(freq1) - 1 else 0
+moda = a_h + ((n_d - n_dprev) / (2 * n_d - n_dprev - n_dnext)) * h
+
+print(f"Математическое ожидание: {math_e}")
+print(f"Дисперсия: {disp}")
+print(f"Медиана: {median_val}")
+print(f"Мода: {moda}")
