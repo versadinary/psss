@@ -210,3 +210,78 @@ conf_mean = statsmodels.stats.weightstats.zconfint(dataset, alpha=0.95, alternat
 x2 = [i**2 for i in d]
 m2x = statsmodels.stats.weightstats.zconfint(x2, alpha=0.95, alternative='two-sided')
 d = (m2x[0] - conf_mean[0]**2, m2x[1] - conf_mean[1]**2)
+
+
+
+## ## 3# ## 24/05
+
+q_e = sum([(y[i] - lin_y(x[i]))**2 for i in range(len(y))])
+s2 = q_e / (len(y) - 2)
+q_r = sum([(lin_y(x[i]) - umean_y)**2 for i in range(len(y))])
+q_y = q_r + q_e
+r2 = q_r / q_y
+s2 = q_e / (len(y) - 2)
+
+print(f"Q_e = {q_e} Q_r = {q_r} Q_y = {q_y} R_2 = {r2} S2 = {s2}")
+
+print(urho_xy)
+print(np.sqrt(r2)) # значения совпали, проверка выполнена 
+
+t = 2.0106
+xi2_0975 = 69.0226
+xi2_0025 = 30.7545
+# доверительный интервал для a
+left = -10.590015846926686 - t * np.sqrt(s2 / (len(y) - 1) / us_x)
+right = -10.590015846926686 + t * np.sqrt(s2 / (len(y) - 1) / us_x)
+print("{0} < a < {1}".format(left, right))
+
+# доверительный интервал для b
+left = 6.74795115588283 - t * np.sqrt(s2 * sum([i**2 for i in x]) / len(x) / (len(x) - 1) / us_x)
+right = 6.74795115588283 + t * np.sqrt(s2 * sum([i**2 for i in x]) / len(x) / (len(x) - 1) / us_x)
+print("{0} < и < {1}".format(left, right))
+
+# доверительный инервал для дисперсии ошибок наблюдений
+
+left = (len(x) - 1) * s2 / xi2_0975
+right = (len(x) - 1) * s2 / xi2_0025
+print("{0} < d < {1}".format(left, right))
+
+# доверительный интервал для среднего значения 
+x0 = x[0]
+y0 = lin_y(x0)
+left = y0 - t * (len(x) - 2) * np.sqrt(s2 * (1 / len(x) + (x0 - umean_x**2) / (len(x) - 1) / us_x))
+right = y0 + t * (len(x) - 2) * np.sqrt(s2 * (1 / len(x) + (x0 - umean_x**2) / (len(x) - 1) / us_x))
+print("{0} < Y0 < {1}".format(left, right))
+
+y_i_j = []
+
+for i in inter_y:
+    sublist = []
+    for k in y:
+        if (i[0] <= k < i[1]): sublist.append(k)
+    y_i_j.append(sublist)
+
+print(*y_i_j, sep='\n')
+y_i_j_avg = [sum(i) / len(i) for i in y_i_j]
+
+
+new_mean_x = [mid_x[i] * n_i_[i] for i in range(len(n_i_))]
+new_mean_y = [y_i_j_avg[i] * len(y_i_j[i]) for i in range(len(y_i_j))]
+q_p = 0
+
+for i in range(len(new_mean)):
+    s = 0
+    for k in range(len(y_i_j[i])):
+        s += (y_i_j[i][k] - new_mean[i])**2
+    s += q_p
+
+q_n = 0
+
+print(f'y(x) = {umean_y - urho_xy * np.sqrt(us_y / us_x) * umean_x} + ({urho_xy * np.sqrt(us_y / us_x)})x')
+print(f'x(y) = {umean_x - urho_xy * np.sqrt(us_x / us_y) * umean_y} + ({urho_xy * np.sqrt(us_x / us_y)})y')
+
+
+
+umean_x = sum(x) / len(x)
+umean_y = sum(y) / len(y)
+print(umean_x, umean_y)
